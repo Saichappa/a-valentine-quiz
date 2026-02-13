@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dynamic MCQ Quiz</title>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; justify-content: center; background-color: #f4f4f9; }
+        .quiz-container { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 400px; margin-top: 50px; }
+        .option-btn { display: block; width: 100%; padding: 10px; margin: 8px 0; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; background: #fff; transition: 0.3s; }
+        .option-btn:hover { background: #f0f0f0; }
+        .correct { background-color: #d4edda !important; border-color: #c3e6cb !important; }
+        .incorrect { background-color: #f8d7da !important; border-color: #f5c6cb !important; }
+        #next-btn { margin-top: 15px; padding: 10px 20px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 4px; display: none; }
+        #score-area { font-weight: bold; margin-bottom: 10px; color: #333; }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div id="score-area">Score: 0</div>
+    <div id="quiz">
+        <h2 id="question">Question Text</h2>
+        <div id="answer-buttons">
+            <!-- Buttons will be generated here -->
+        </div>
+        <button id="next-btn">Next Question</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        { q: "when did our Journey started 🫣👣👣?", options: ["poyina janma nundi 😁", "march 14,2023", "Brahma devudu manalni chesinappati nundi 😉"], correct: 2 },
+        { q: "What do I like most about you??", options: ["Hyperlinks Text Mark Language", "Hyper Text Markup Language", "Home Tool Markup Language"], correct: 1 },
+        { q: "Which tag is used for the largest heading?", options: ["<h6>", "<heading>", "<h1>"], correct: 2 },
+        { q: "Which property changes text color in CSS?", options: ["font-color", "color", "text-style"], correct: 1 }
+    ];
+
+    let currentIdx = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById('question');
+    const answerButtonsEl = document.getElementById('answer-buttons');
+    const nextBtn = document.getElementById('next-btn');
+    const scoreArea = document.getElementById('score-area');
+
+    function loadQuestion() {
+        resetState();
+        let currentQuestion = questions[currentIdx];
+        questionEl.innerText = currentQuestion.q;
+
+        currentQuestion.options.forEach((option, index) => {
+            const button = document.createElement('button');
+            button.innerText = option;
+            button.classList.add('option-btn');
+            button.onclick = () => selectAnswer(button, index === currentQuestion.correct);
+            answerButtonsEl.appendChild(button);
+        });
+    }
+
+    function resetState() {
+        nextBtn.style.display = 'none';
+        while (answerButtonsEl.firstChild) {
+            answerButtonsEl.removeChild(answerButtonsEl.firstChild);
+        }
+    }
+
+    function selectAnswer(button, isCorrect) {
+        if (isCorrect) {
+            button.classList.add('correct');
+            score++;
+            scoreArea.innerText = `Score: ${score}`;
+        } else {
+            button.classList.add('incorrect');
+            // Highlight the correct answer even if the user failed
+            const correctIdx = questions[currentIdx].correct;
+            answerButtonsEl.children[correctIdx].classList.add('correct');
+        }
+        
+        // Disable all buttons after selection
+        Array.from(answerButtonsEl.children).forEach(btn => btn.disabled = true);
+        nextBtn.style.display = 'block';
+    }
+
+    nextBtn.addEventListener('click', () => {
+        currentIdx++;
+        if (currentIdx < questions.length) {
+            loadQuestion();
+        } else {
+            questionEl.innerText = "Quiz Completed!";
+            answerButtonsEl.innerHTML = `Your final score is ${score} out of ${questions.length}`;
+            nextBtn.style.display = 'none';
+        }
+    });
+
+    loadQuestion();
+</script>
+
+</body>
+</html>
